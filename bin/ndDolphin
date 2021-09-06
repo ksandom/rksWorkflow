@@ -1,0 +1,15 @@
+#!/bin/bash
+# Open a new dolphin window of a new mount after mounting a newly plugged in device.
+# TODO Abstract this script so users can use other file managers without duplicating code.
+
+mountPoint="/mnt/newDevice"
+
+mountNew
+dolphin --new-window ~/files/media/{audio,graphics/unsorted} &
+
+echo
+echo "Starting the window to import from. When closed, it will trigger umountNew."
+dolphin --new-window "$mountPoint"
+umountNew
+echo "Got to the end with exit code=$?."
+

@@ -1,0 +1,6 @@
+#!/bin/bash
+# Unmount a device mounted with newDevice.
+
+mountPoint="/mnt/newDevice"
+
+sudo umount "$mountPoint"
