@@ -1,0 +1,45 @@
+#!/bin/bash
+# Generate a JPEG sequence file from jpg files in the current directory.
+
+outputFile="jpgSequence.jpgs"
+
+# Default values:
+width="3840"
+height="2160"
+frameRate="25.000000"
+warn=0
+
+function getFiles
+{
+  find -type f -iname '*jp*g' | sort
+}
+
+firstFile="$(getFiles | head -n1)"
+
+# Figure out the resolution.
+if which identify > /dev/null; then
+  read -r width height <<<$(identify -format "%[w] %[h]" "$firstFile")
+  echo "w=$width h=$height"
+else
+  echo "WARNING: Imagemagik does not appear to be installed. Can't auto detect dimensions. " >&2
+  warn=1
+fi
+
+
+header="JPEGLIST
+# First line is always JPEGLIST
+# Frame rate:
+$frameRate
+# Width:
+$width
+# Height:
+$height
+# List of image files follows"
+
+echo "$header" > "$outputFile"
+getFiles >> "$outputFile"
+
+if [ "$warn" -gt 0 ]; then
+  echo "There was a warning. Check the output."
+  exit 2
+fi
