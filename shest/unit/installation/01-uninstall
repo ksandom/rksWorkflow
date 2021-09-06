@@ -1,0 +1,24 @@
+#!/bin/bash
+# Write a decription of the test here.
+
+. "$SHEST_SCRIPT" "--doNothing"
+
+export USR_DIR="$HOME/usr"
+export LIB_DIR="$HOME/var/lib/rksWorkflow"
+
+expect_exists  $HOME/usr/bin/listTools
+expect_exists $HOME/usr/bin/mountNew
+expect_exists $HOME/usr/bin/ndDolphin
+expect_exists $HOME/usr/bin/newDevice
+expect_exists $HOME/usr/bin/newScript
+expect_exists $HOME/usr/bin/umountNew
+
+./misc/uninstall.sh ## Test this.
+expect_exitCode 0
+
+expect_not_exists  $HOME/usr/bin/listTools
+expect_not_exists $HOME/usr/bin/mountNew
+expect_not_exists $HOME/usr/bin/ndDolphin
+expect_not_exists $HOME/usr/bin/newDevice
+expect_not_exists $HOME/usr/bin/newScript
+expect_not_exists $HOME/usr/bin/umountNew
