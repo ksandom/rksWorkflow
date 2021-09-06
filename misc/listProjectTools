@@ -1,0 +1,5 @@
+#!/bin/bash
+# Adapt ./bin/listTools output for use in the README.md
+
+./bin/listTools bin/* |
+  sed 's/^/* /g'

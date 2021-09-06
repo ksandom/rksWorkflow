@@ -1,0 +1,8 @@
+#!/bin/bash
+# List the tools and their first line comment.
+
+while read file; do
+  comment="$(head -n2 "$file" | tail -n1 | cut -b3-)"
+  
+  echo "$file - $comment"
+done < <(ls -1 "$@")

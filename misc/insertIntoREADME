@@ -1,0 +1,21 @@
+#!/bin/bash
+# Insert details into the README.md.
+
+file="README.md"
+
+function insertBetweenTitles
+{
+  local firstTitle="$1"
+  local secondTitle="$2"
+  local contents="$3"
+  local before
+  
+  before="$(grep -B 10000 "$firstTitle" "$file")"
+  after="$(grep -A 10000 "$secondTitle" "$file")"
+  
+  echo -e "$before" > "$file"
+  echo -e "$contents" >> "$file"
+  echo -e "$after" >> "$file"
+}
+
+insertBetweenTitles "^## Tools within$" "^## Separate projects that form part of this workflow$" "$(echo -e "\n$(./misc/listProjectTools)")\n"
