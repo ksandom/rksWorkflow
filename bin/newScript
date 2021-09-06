@@ -1,0 +1,18 @@
+#!/bin/bash
+# Creates a new script with "$1" as the name.
+
+if [ "$1" == '' ]; then
+    echo "Expected the name as the first parameter."
+    exit 1
+fi
+
+name="$1"
+fileName=~/"bin/$name"
+
+echo "#!/bin/bash
+# Generic comment about what the script does.
+" > "$fileName"
+chmod 755 "$fileName"
+
+# TODO Use the user's choice of editor.
+kate "$fileName" &
