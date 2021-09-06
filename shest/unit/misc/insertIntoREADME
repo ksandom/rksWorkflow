@@ -1,0 +1,15 @@
+#!/bin/bash
+# Write a decription of the test here.
+
+. "$SHEST_SCRIPT" "--doNothing"
+expect_fileContains "README.md" "# rksWorkflow"
+expect_fileContains "README.md" "## Tools within"
+expect_fileContains "README.md" "## Separate projects that form part of this workflow"
+expect_fileContains "README.md" "## Install"
+$HOME/misc/insertIntoREADME ## Test this.
+expect_exitCode 0
+expect_fileContains "README.md" "# rksWorkflow"
+expect_fileContains "README.md" "## Tools within"
+expect_fileContains "README.md" "## Separate projects that form part of this workflow"
+expect_fileContains "README.md" "## Install"
+expect_fileContains "README.md" "bin/listTools"
