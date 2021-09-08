@@ -1,0 +1,13 @@
+#!/bin/bash
+# Invert the colours of an image.
+
+file="$1"
+if [ "$file" == '' ]; then
+  echo "Must specify the file." >&2
+  exit 1
+fi
+
+fileOut="$(noExtension "$file")-inverted.jpg"
+
+echo "Invert: $file -> $fileOut"
+convert "$file" -channel RGB -negate "$fileOut"

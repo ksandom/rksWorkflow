@@ -1,0 +1,77 @@
+#!/bin/bash
+# Take a photo, and resize it into several resolutions.#
+#
+# Syntax: allResolutions fileName [spaceSeparatedListOfResolutions]
+# Eg: allResolutions photo.jpg # Will resize to default resolutions.
+# Eg: allResolutions photo.jpg 3840x2160 1920x1080 800x600
+#
+# It assumes that the aspect ratio does not need to be kept.
+
+file="$1"
+resolutions="30720x17280 15360x8640 7680x4320 3840x2160 1920x1200 1920x1080 1280x800 1280x720 854x480 800x600 640x480 640x360 426x240 320x200"
+method="${METHOD:-fast}" # fast, hq
+ignoreAspect="${IGNORE_ASPECT:-true}"
+
+if [ "$file" == '' ]; then
+  echo "Must specify the file to resize." >&2
+  exit 1
+fi
+
+if [ ! -e "$file" ]; then
+  echo "Could not find file \"$file\"." >&2
+  exit 1
+fi
+
+if [ "$2" != '' ]; then
+  shift
+  resolutions="$*"
+fi
+
+read -r width height <<<$(identify -format "%[w] %[h]" "$file")
+
+echo "Summary:
+  File:               $file
+    width: $width
+    height: $height
+  Output resolutions: $resolutions
+  Method:             $method
+"
+if [ "$method" == 'fast' ]; then
+  echo "  Method: fast (use the previous file rather than the source. Do this while prototyping with huge source files.) To disable this, set METHOD to \"hq\"."
+fi
+
+function doResize
+{
+  local resolution
+  local fileName="$2"
+  local fileOut="$3"
+  local position=0
+  local flags=""
+
+  if [ "$ignoreAspect" == 'true' ]; then
+    resolution="$1"
+  else
+    resolution="$1\\\!"
+  fi
+  
+  if [ "$ignoreAspect" == 'true' ] ; then
+    flags=""
+  fi
+  
+  echo "$fileOut"
+  time convert "$fileName" -resize "$resolution" "$fileOut"
+  echo
+}
+
+fileIn="$file"
+for resolution in $resolutions; do
+  mkdir -p "resized"
+  fileOut="resized/$(noExtension "$file")-$resolution.jpg"
+  doResize "$resolution" "$fileIn" "$fileOut"
+  
+  if [ "$method" == 'fast' ]; then
+    fileIn="$fileOut"
+  fi
+done
+
+wait
