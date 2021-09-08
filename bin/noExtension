@@ -1,0 +1,10 @@
+#!/bin/bash
+# Return the filename without it's extention.
+
+file="$1"
+if [ "$file" == '' ]; then
+  echo "Must specify the file." >&2
+  exit 1
+fi
+
+echo "$file" | sed 's/\.[:a-z:]*[:A-Z:]*$//g'
