@@ -1,0 +1,42 @@
+#!/bin/bash
+# Resizes all photos in a directory, and puts them in a directory named by the resolution.
+# 
+# Syntax
+#   resizeAll resolution
+# Eg
+#   resizeAll 2560x1920
+
+if [ "$1" == '' ]; then
+  echo "Expected a resolution to be specified in the form WxH. Eg 640x480." >&2
+  exit 1
+fi
+
+resolution="$1"
+
+function getPhotos
+{
+  find . -type f -iname '*jp*g' | cut -b 3-
+}
+
+function doResize
+{
+  local resolution="$1"
+  local total="$2"
+  local position=0
+  
+  mkdir -p "$resolution"
+  while read fileName; do
+    fileOut="$resolution/$fileName"
+    let position=$position+1
+    echo "$position/$total $fileName -> $fileOut"
+    convert "$fileName" -resize "$resolution" "$fileOut" &
+    
+    # TODO Throttle forking.
+  done
+  
+  wait
+}
+
+total="$(getPhotos | wc -l)"
+getPhotos | doResize "$resolution" "$total"
+
