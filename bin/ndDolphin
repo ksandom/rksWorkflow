@@ -5,9 +5,11 @@
 mountPoint="/mnt/newDevice"
 
 mountNew
-dolphin --new-window ~/files/media/{audio,graphics/unsorted} &
+dolphin --new-window ~/{n/,}files/media/{audio,graphics/unsorted} &
 
 echo
+echo "Putting the current date into the clipboard for convenience."
+date "+%Y-%m-%d-" | xclip -selection clipboard -i
 echo "Starting the window to import from. When closed, it will trigger umountNew."
 dolphin --new-window "$mountPoint"
 umountNew
