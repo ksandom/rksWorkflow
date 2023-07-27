@@ -1,0 +1,61 @@
+#!/bin/bash
+# Creates a timelapse video from a source video.
+# Usage:
+#   $0 fileIn whichFrameNumberToTake [sub-directoryToPutTheFileIn]
+#
+# Eg If whichFrameNumberToTake is 4, then every 4th frame will contribute to the final video. This is effectively how many times to speed up the footage.
+
+if [ "$2" == '' ]; then
+    echo "Not enough input. Help output below." >&2
+    grep -B1000 'grep -B1000' "$0" | tail -n+2 | grep '^#' | cut -b 3- | sed 's#\$0#'$0'#g'
+    exit 1
+fi
+
+fileIn="$1"
+whichFrameNumberToTake="$2"
+prefix="$3"
+
+if [ "$prefix" != '' ]; then
+    echo "prefix=$prefix"
+    prefix="$prefix/"
+fi
+
+name="$(echo "$fileIn" | sed 's/\.\(mp4\|MP4\)//g')"
+fileOut="$prefix$name-tl$whichFrameNumberToTake.mp4"
+lockFile="$fileOut.lock"
+waitTime="0.5"
+host="$(hostname)"
+
+echo "Slow-mo:
+    File in:            $fileIn
+    File out:           $fileOut
+    Lock file:          $lockFile
+    Wait seconds:       $waitTime
+    Hostname:           $host
+    Frame to take:      $whichFrameNumberToTake"
+
+if [ -e "$fileOut" ]; then
+    echo "    $fileOut already exists. Skipping."
+    exit 1
+fi
+
+if [ -e "$lockFile" ]; then
+    echo "    $lockFile ($(cat "$lockFile")) already exists. Skipping."
+    exit 1
+fi
+
+
+echo "$host" > "$lockFile"
+sleep "$waitTime"
+
+readHost="$(cat "$lockFile")"
+
+if [ "$readHost" != "$host" ]; then
+    echo "    $lockFile ($(cat "$lockFile")) has been written after us. Skipping."
+    exit 1
+fi
+
+# Based on: https://stackoverflow.com/questions/41902160/create-time-lapse-video-from-other-video
+ffmpeg -an -i "$fileIn" -vf select='not(mod(n\,'"$whichFrameNumberToTake"'))',setpts=N/25/TB -r 25 "$fileOut"
+
+rm "$lockFile"
