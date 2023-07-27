@@ -65,8 +65,8 @@ function doResize
 
 fileIn="$file"
 for resolution in $resolutions; do
-  mkdir -p "resized"
-  fileOut="resized/$(noExtension "$file")-$resolution.jpg"
+  mkdir -p "resized/$resolution"
+  fileOut="resized/$resolution/$(noExtension "$file")-$resolution.jpg"
   doResize "$resolution" "$fileIn" "$fileOut"
   
   if [ "$method" == 'fast' ]; then
