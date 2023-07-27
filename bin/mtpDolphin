@@ -1,0 +1,21 @@
+#!/bin/bash -x
+# Open a new dolphin window of a new mount after mounting a newly plugged in device.
+# TODO Abstract this script so users can use other file managers without duplicating code.
+
+mountPoint="/tmp/mtpDevice"
+
+simple-mtpfs -l
+mkdir -p "$mountPoint"
+simple-mtpfs --device 1 "$mountPoint"
+
+dolphin --new-window ~/{n/,}files/media/{audio,graphics/unsorted} &
+
+echo
+echo "Putting the current date into the clipboard for convenience."
+date "+%Y-%m-%d-" | xclip -selection clipboard -i
+echo "Starting the window to import from. When closed, it will trigger umountNew."
+dolphin --new-window "$mountPoint"
+echo "Got to the end with exit code=$?."
+
+umount "$mountPoint"
+rmdir "$mountPoint"
