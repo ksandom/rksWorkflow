@@ -68,6 +68,7 @@ mv -v "$partFile" "$fileOut"
 
 if [ "$symlink" != '' ]; then
     echo "Creating symlink in $symlink"
+    mkdir -p "$symlink"
     cd "$symlink"
     ln -sv "../$fileOut" .
 fi
