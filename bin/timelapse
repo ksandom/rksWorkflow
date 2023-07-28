@@ -1,7 +1,7 @@
 #!/bin/bash
 # Creates a timelapse video from a source video.
 # Usage:
-#   $0 fileIn whichFrameNumberToTake [sub-directoryToPutTheFileIn]
+#   $0 fileIn whichFrameNumberToTake [sub-directoryToPutASymlinkIn]
 #
 # Eg If whichFrameNumberToTake is 4, then every 4th frame will contribute to the final video. This is effectively how many times to speed up the footage.
 
@@ -72,4 +72,6 @@ if [ "$symlink" != '' ]; then
     ln -sv "../$fileOut" .
 fi
 
-rm "$lockFile"
+rm -v "$lockFile"
+
+exit 0

@@ -1,0 +1,23 @@
+#!/bin/bash
+# Add a timelapse ojb to the que.
+# Usage:
+#   $0 fileIn whichFrameNumberToTake [whereToPlaceAnExtraSymlink]
+
+if [ "$2" == '' ]; then
+    echo "Not enough input. Help output below." >&2
+    grep -B1000 'grep -B1000' "$0" | tail -n+2 | grep '^#' | cut -b 3- | sed 's#\$0#'$0'#g'
+    exit 0
+fi
+
+fileIn="$1"
+whichFrameNumberToTake="$2"
+symlink="$3"
+
+mkdir -p queue/src
+
+echo "# A timelapse queue file.
+fileIn=$fileIn
+whichFrameNumberToTake=$whichFrameNumberToTake
+symlink=$symlink" > queue/src/"$fileIn-$whichFrameNumberToTake-$symlink"
+
+echo "Added $fileIn/$whichFrameNumberToTake"

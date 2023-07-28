@@ -19,11 +19,14 @@ fileName="$1"
 while [ ! "$2" == '' ]; do
     whichFrameNumberToTake="$2"
 
-    echo -e "\n$0: $whichFrameNumberToTake  $fileName"
+    echo -e "\n$0: start  $whichFrameNumberToTake  $fileName"
     set -x
-    timelapse "$fileName" "$whichFrameNumberToTake"
+    timelapseQueue "$fileName" "$whichFrameNumberToTake"
     set +x
+    echo -e "\n$0: finish $whichFrameNumberToTake  $fileName"
 
     shift
     sleep 0.1
 done
+
+exit 0

@@ -1,0 +1,63 @@
+#!/bin/bash
+# Creates timelapses based on a queue.
+# Usage:
+#   $0
+
+workerID=$(hostname)-$$
+
+mkdir -p "queue/src"
+
+function getNextJob
+{
+    cd queue/src
+    ls -1 | sort | head -n 1
+    cd ../..
+}
+
+function takeJob
+{
+    local jobName="$1"
+
+    cd queue
+    mkdir -p "$workerID"
+
+    cd "$workerID"
+    mv -v ../src/"$jobName" .
+
+    sleep 0.2
+
+    cd ../..
+
+    if [ -e "queue/$workerID/$jobName" ]; then
+        echo "Job $jobName is ours."
+        return 0
+    else
+        echo "Job $jobName has been taking by someone else."
+        return 1
+    fi
+}
+
+function doJob
+{
+    local jobName="$1"
+    local jobFile="queue/$workerID/$jobName"
+
+    pwd
+
+    . "$jobFile"
+
+    timelapse "$fileIn" "$whichFrameNumberToTake" "$symlink"
+
+    rm -v "$jobFile"
+}
+
+echo "Waiting for jobs."
+while sleep 0.5; do
+    job="$(getNextJob)"
+
+    if [ "$job" != '' ]; then
+        if takeJob "$job"; then
+            doJob "$job"
+        fi
+    fi
+done

@@ -17,9 +17,13 @@ fi
 allNumbers="$@"
 
 while read fileName; do
-    echo -e "\n\n$0: $fileName numbers=$allNumbers"
+    if [ -f "$fileName" ]; then
+        echo -e "\n\n$0: start  $fileName numbers=$allNumbers"
 
-    set -x
-    timelapseMultiple "$fileName" $allNumbers
-    set +x
+        set -x
+        timelapseMultiple "$fileName" $allNumbers
+        set +x
+
+        echo -e "$0: finish $fileName numbers=$allNumbers\n\n"
+    fi
 done < <(ls -1)
