@@ -25,6 +25,7 @@ fi
 
 name="$(echo "$fileIn" | sed 's/\.\(mp4\|MP4\|mkv\|MKV\)//g')"
 fileOut="$prefix/$name-tl$whichFrameNumberToTake.mp4"
+partFile="$fileOut.part.mp4"
 lockFile="$fileOut.lock"
 waitTime="0.5"
 host="$(hostname)"
@@ -33,9 +34,11 @@ echo "Slow-mo:
     File in:            $fileIn
     File out:           $fileOut
     Lock file:          $lockFile
+    Partial file:       $partFile
     Wait seconds:       $waitTime
     Hostname:           $host
-    Frame to take:      $whichFrameNumberToTake"
+    Frame to take:      $whichFrameNumberToTake
+    Symlink into:       $symlink"
 
 if [ -e "$fileOut" ]; then
     echo "    $fileOut already exists. Skipping."
@@ -59,7 +62,9 @@ if [ "$readHost" != "$host" ]; then
 fi
 
 # Based on: https://stackoverflow.com/questions/41902160/create-time-lapse-video-from-other-video
-# ffmpeg -an -i "$fileIn" -vf select='not(mod(n\,'"$whichFrameNumberToTake"'))',setpts=N/25/TB -r 25 "$fileOut"
+ffmpeg -an -i "$fileIn" -vf select='not(mod(n\,'"$whichFrameNumberToTake"'))',setpts=N/25/TB -r 25 "$partFile"
+
+mv -v "$partFile" "$fileOut"
 
 if [ "$symlink" != '' ]; then
     echo "Creating symlink in $symlink"
