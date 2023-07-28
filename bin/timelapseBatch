@@ -19,11 +19,6 @@ allNumbers="$@"
 while read fileName; do
     if [ -f "$fileName" ]; then
         echo -e "\n\n$0: start  $fileName numbers=$allNumbers"
-
-        set -x
         timelapseMultiple "$fileName" $allNumbers
-        set +x
-
-        echo -e "$0: finish $fileName numbers=$allNumbers\n\n"
     fi
 done < <(ls -1)
