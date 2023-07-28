@@ -20,10 +20,7 @@ while [ ! "$2" == '' ]; do
     whichFrameNumberToTake="$2"
 
     echo -e "\n$0: start  $whichFrameNumberToTake  $fileName"
-    set -x
-    timelapseQueue "$fileName" "$whichFrameNumberToTake"
-    set +x
-    echo -e "\n$0: finish $whichFrameNumberToTake  $fileName"
+    timelapseQueue "$fileName" "$whichFrameNumberToTake" "$SYMLINK"
 
     shift
     sleep 0.1
