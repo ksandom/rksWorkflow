@@ -1,0 +1,32 @@
+#!/bin/bash
+# Creates a timelapse video from every file in the current directory. Each subsequent file gets a faster timelapse than the previous file.
+# Usage:
+#   $0 startingFrameNumberToTake howMuchToIncrement
+#
+# If startingFrameNumberToTake is 4, then every 4th frame will contribute to the final video. This is effectively how many times to speed up the footage.
+# If howMuchToIncrement is 2, and the startingFrameNumberToTake is 4, then the first file will be timelapsed at 4, The second at 6, The third at 8, etc
+#
+# Eg This will create a sequence starting at 10, and incrementing by 3 for each new file.
+#   $0 10 3
+
+if [ "$1" == '' ]; then
+    echo "Not enough input. Help output below." >&2
+    grep -B1000 'grep -B1000' "$0" | tail -n+2 | grep '^#' | cut -b 3- | sed 's#\$0#'$0'#g'
+    exit 1
+fi
+
+number="$1"
+incrementor="$2"
+symlinkDir="$number-$incrementor"
+
+while read fileName; do
+    if [ -f "$fileName" ]; then
+        echo -e "\n\n$0: $fileName numbers=$number"
+
+        set -x
+        timelapseQueue "$fileName" "$number" "$symlinkDir"
+        set +x
+
+        let number=$number+$incrementor
+    fi
+done < <(ls -1)
