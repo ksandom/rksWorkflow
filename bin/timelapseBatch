@@ -14,22 +14,12 @@ if [ "$1" == '' ]; then
     exit 1
 fi
 
-function doAllFiles
-{
-    whichFrameNumberToTake="$1"
-    while read fileName; do
-        if [ -f "$fileName" ]; then
-            subDir="tl-$whichFrameNumberToTake"
-            mkdir -p "$subDir"
-            echo "$0: $whichFrameNumberToTake  $fileName"
-            timelapse "$fileName" "$whichFrameNumberToTake" "$subDir"
-        fi
-    done < <(ls -1)
-}
+allNumbers="$@"
 
-while [ ! "$1" == '' ]; do
-    doAllFiles "$1"
+while read fileName; do
+    echo -e "\n\n$0: $fileName numbers=$allNumbers"
 
-    shift
-    sleep 0.1
-done
+    set -x
+    timelapseMultiple "$fileName" $allNumbers
+    set +x
+done < <(ls -1)

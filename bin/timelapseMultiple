@@ -1,0 +1,29 @@
+#!/bin/bash
+# Calls timelapse for each whichFrameNumberToTake.
+# Usage:
+#   $0 fileName whichFrameNumberToTake1 whichFrameNumberToTake2 whichFrameNumberToTake3...
+#
+# Eg If whichFrameNumberToTake is 4, then every 4th frame will contribute to the final video. This is effectively how many times to speed up the footage.
+#
+# Eg For vokoscreenNG-2023-07-26_20-37-47.mkv, create slow-mos of speed 2, 10, and 100.
+#   $0 vokoscreenNG-2023-07-26_20-37-47.mkv 2 10 100
+
+if [ "$2" == '' ]; then
+    echo "Not enough input. Help output below." >&2
+    grep -B1000 'grep -B1000' "$0" | tail -n+2 | grep '^#' | cut -b 3- | sed 's#\$0#'$0'#g'
+    exit 1
+fi
+
+fileName="$1"
+
+while [ ! "$2" == '' ]; do
+    whichFrameNumberToTake="$2"
+
+    echo -e "\n$0: $whichFrameNumberToTake  $fileName"
+    set -x
+    timelapse "$fileName" "$whichFrameNumberToTake"
+    set +x
+
+    shift
+    sleep 0.1
+done
