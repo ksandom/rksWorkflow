@@ -1,0 +1,20 @@
+#!/bin/bash
+# Show the status of the timelapse jobs.
+
+
+function showStats
+{
+    prefix="$1"
+    while read thing;do
+        cd $thing
+            count="$(find -type f | wc -l)"
+            echo "$prefix$thing    $count"
+        cd ..
+    done < <(ls -1 | sort)
+}
+
+cd queue
+showStats
+
+cd workers
+showStats "  "
