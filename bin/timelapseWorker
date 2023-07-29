@@ -4,8 +4,11 @@
 #   $0
 
 workerID=$(hostname)-$$
+workderDir="queue/workers/$workerID"
+doneDir="queue/done"
 
 mkdir -p "queue/src"
+mkdir -p "queue/done"
 
 function getNextJob
 {
@@ -18,15 +21,10 @@ function takeJob
 {
     local jobName="$1"
 
-    cd queue
-    mkdir -p "$workerID"
-
-    cd "$workerID"
-    mv -v ../src/"$jobName" .
+    mkdir -p "$workerDir"
+    mv -v queue/src/"$jobName" "$workderDir"
 
     sleep 0.2
-
-    cd ../..
 
     if [ -e "queue/$workerID/$jobName" ]; then
         echo "Job $jobName is ours."
@@ -40,7 +38,7 @@ function takeJob
 function doJob
 {
     local jobName="$1"
-    local jobFile="queue/$workerID/$jobName"
+    local jobFile="$workderDir/$jobName"
 
     pwd
 
@@ -48,7 +46,7 @@ function doJob
 
     timelapse "$fileIn" "$whichFrameNumberToTake" "$symlink"
 
-    rm -v "$jobFile"
+    mv -v "$jobFile" "$doneDir"
 }
 
 echo "Waiting for jobs."
