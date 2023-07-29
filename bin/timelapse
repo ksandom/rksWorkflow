@@ -16,6 +16,17 @@ whichFrameNumberToTake="$2"
 symlink="$3"
 prefix="tl-$whichFrameNumberToTake"
 
+function symlink
+{
+    if [ "$symlink" != '' ]; then
+        echo "Creating symlink in $symlink"
+        mkdir -p "$symlink"
+        cd "$symlink"
+        ln -sv "../$fileOut" .
+        cd ..
+    fi
+}
+
 mkdir -p "$prefix"
 
 if [ ! -f "$fileIn" ]; then
@@ -42,11 +53,13 @@ echo "Slow-mo:
 
 if [ -e "$fileOut" ]; then
     echo "    $fileOut already exists. Skipping."
+    symlink
     exit 0
 fi
 
 if [ -e "$lockFile" ]; then
     echo "    $lockFile ($(cat "$lockFile")) already exists. Skipping."
+    symlink
     exit 0
 fi
 
@@ -58,6 +71,7 @@ readHost="$(cat "$lockFile")"
 
 if [ "$readHost" != "$host" ]; then
     echo "    $lockFile ($(cat "$lockFile")) has been written after us. Skipping."
+    symlink
     exit 0
 fi
 
@@ -66,12 +80,7 @@ ffmpeg -an -i "$fileIn" -vf select='not(mod(n\,'"$whichFrameNumberToTake"'))',se
 
 mv -v "$partFile" "$fileOut"
 
-if [ "$symlink" != '' ]; then
-    echo "Creating symlink in $symlink"
-    mkdir -p "$symlink"
-    cd "$symlink"
-    ln -sv "../$fileOut" .
-fi
+symlink
 
 rm -v "$lockFile"
 
