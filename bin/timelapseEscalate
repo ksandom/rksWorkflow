@@ -17,7 +17,7 @@ fi
 
 number="$1"
 incrementor="$2"
-symlinkDir="$number-$incrementor"
+symlinkDir="escalate-$number-$incrementor"
 
 while read fileName; do
     if [ -f "$fileName" ]; then
