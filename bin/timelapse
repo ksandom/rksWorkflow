@@ -14,7 +14,7 @@ fi
 fileIn="$1"
 whichFrameNumberToTake="$2"
 symlink="$3"
-prefix="tl-$whichFrameNumberToTake"
+prefix="timelapses/tl-$whichFrameNumberToTake"
 
 function symlink
 {
