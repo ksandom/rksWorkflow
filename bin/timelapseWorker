@@ -4,11 +4,11 @@
 #   $0
 
 workerID=$(hostname)-$$
-workderDir="queue/workers/$workerID"
+workerDir="queue/workers/$workerID"
 doneDir="queue/done"
 
 mkdir -p "queue/src"
-mkdir -p "queue/done"
+mkdir -p "$doneDir"
 
 function getNextJob
 {
@@ -22,11 +22,11 @@ function takeJob
     local jobName="$1"
 
     mkdir -p "$workerDir"
-    mv -v queue/src/"$jobName" "$workderDir"
+    mv -v queue/src/"$jobName" "$workerDir"
 
     sleep 0.2
 
-    if [ -e "queue/$workerID/$jobName" ]; then
+    if [ -e "$workerDir/$jobName" ]; then
         echo "Job $jobName is ours."
         return 0
     else
@@ -38,7 +38,7 @@ function takeJob
 function doJob
 {
     local jobName="$1"
-    local jobFile="$workderDir/$jobName"
+    local jobFile="$workerDir/$jobName"
 
     pwd
 
